@@ -1,0 +1,7 @@
+.venv
+tokens.txt
+/venv
+#/icons/
+.idea/
+*.pyc
+__pycache__/
