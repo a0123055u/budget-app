@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'oauth2_provider',
     'budget_api.apps.BudgetApiConfig',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -50,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'budgetcore.urls'
@@ -167,4 +169,6 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',  # Change to 'AllowAny' to allow all
     ],
 }
+
+CORS_ALLOW_ALL_ORIGINS = True
 
