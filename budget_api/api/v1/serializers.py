@@ -1,49 +1,23 @@
 from rest_framework import serializers
 
-from budget_api.models import IncomeCategory, IncomeSubCategory, ExpensesSubCategory, ExpensesCategory, Income, Expense
+from budget_api.models import Category, SubCategory, UserTransaction
 
-
-class IncomeSubCategorySerializer(serializers.ModelSerializer):
+class SubCategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = IncomeSubCategory
+        model = SubCategory
         fields = '__all__'
 
-class IncomeCategorySerializer(serializers.ModelSerializer):
-    income_subcategories = IncomeSubCategorySerializer(many=True, read_only=True)
+class CategorySerializer(serializers.ModelSerializer):
+    subcategories = SubCategorySerializer(many=True, read_only=True)
     class Meta:
-        model = IncomeCategory
-        fields = ['id', 'category', 'description', 'income_subcategories']
+        model = Category
+        fields = ['id', 'category', 'description', 'subcategories']
 
-class ExpenseSubCategorySerializer(serializers.ModelSerializer):
+
+class UserTransactionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ExpensesSubCategory
+        model = UserTransaction
         fields = '__all__'
 
-class ExpensesCategorySerializer(serializers.ModelSerializer):
-    expense_subcategories = ExpenseSubCategorySerializer(many=True, read_only=True)
-    class Meta:
-        model = ExpensesCategory
-        fields = ['id', 'category', 'description', 'expense_subcategories']
-
-class IncomeSerializer(serializers.ModelSerializer):
-    user = serializers.ReadOnlyField(source='user.username')
-    class Meta:
-        model = Income
-        fields = ['id', 'user', 'category', 'sub_category', 'amount', 'description', 'date']
-    def validate_amount(self, value):
-        if value <= 0:
-            raise serializers.ValidationError("Amount must be a positive value.")
-        return value
-
-
-class ExpenseSerializer(serializers.ModelSerializer):
-    user = serializers.ReadOnlyField(source='user.username')
-    class Meta:
-        model = Expense
-        fields = ['id', 'user', 'category', 'sub_category', 'amount', 'description', 'date']
-    def validate_amount(self, value):
-        if value <= 0:
-            raise serializers.ValidationError("Amount must be a positive value.")
-        return value
 
 
