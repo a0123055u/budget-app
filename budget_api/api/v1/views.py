@@ -41,6 +41,8 @@ class UserTransactionUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
     authentication_classes = [OAuth2Authentication]
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
 
+    lookup_field = 'transaction_id'
+
 
 
 

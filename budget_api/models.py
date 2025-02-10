@@ -73,3 +73,6 @@ class UserTransaction(TimeStampedModel):
 
         super().save(*args, **kwargs)
 
+    def __str__(self):
+        return f"{self.transaction_id} - {self.user}"
+
