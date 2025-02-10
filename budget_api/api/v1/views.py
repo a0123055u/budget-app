@@ -1,3 +1,5 @@
+from unicodedata import category
+
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .mixins import  CacheResponseMixin
@@ -16,12 +18,12 @@ class CategoryApi(generics.ListAPIView):
     serializer_class = CategorySerializer
     authentication_classes = [OAuth2Authentication]
     permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, *args, **kwargs):
-        # If you need to modify the response data before returning it
-        response = super().get(request, *args, **kwargs)
-        # Optionally you could log or modify the response data here
-        return response
+    def get_queryset(self):
+        queryset = Category.objects.prefetch_related('subcategories').all()
+        category_type = self.request.query_params.get('category_type', None)
+        if category_type:
+            queryset = queryset.filter(category_type=str(category_type).lower())
+        return queryset
 
 class UserTransactionListCreateAPIView(generics.CreateAPIView):
     queryset = UserTransaction.objects.all()

@@ -11,7 +11,7 @@ class CategorySerializer(serializers.ModelSerializer):
     subcategories = SubCategorySerializer(many=True, read_only=True)
     class Meta:
         model = Category
-        fields = ['id', 'category', 'description', 'subcategories']
+        fields = ['id', 'category', 'description', 'subcategories', 'category_type']
 
 
 class UserTransactionSerializer(serializers.ModelSerializer):
