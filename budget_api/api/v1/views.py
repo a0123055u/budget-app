@@ -1,3 +1,4 @@
+import logging
 from unicodedata import category
 
 from rest_framework.response import Response
@@ -10,6 +11,8 @@ from .permissions import IsOwnerOrReadOnly
 from .serializers import (UserTransactionSerializer, CategorySerializer)
 #, IncomeSerializer, ExpenseSerializer)
 from ...models import *
+log = logging.getLogger(__name__)
+
 # clean up the imports and remove the commented out code from the previous steps
 
 class CategoryApi(generics.ListAPIView):

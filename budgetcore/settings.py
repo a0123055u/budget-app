@@ -157,6 +157,16 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+OAUTH2_PROVIDER = {
+    "ACCESS_TOKEN_EXPIRE_SECONDS": 3600,
+    "ALLOW_PUBLIC_CLIENTS": True,  # Allow clients without client_secret
+    "RESOURCE_SERVER_INTROSPECTION_URL": "/budget/api/v1/introspect/",
+    "OAUTH2_VALIDATOR_CLASS": "oauth2_provider.oauth2_validators.OAuth2Validator",
+}
+
+
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
@@ -170,5 +180,11 @@ REST_FRAMEWORK = {
     ],
 }
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "https://your-production-domain.com",
+]
+
+
+# CORS_ALLOW_ALL_ORIGINS = True
 

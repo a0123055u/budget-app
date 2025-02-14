@@ -15,9 +15,10 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class UserTransactionSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = UserTransaction
-        fields = '__all__'
+        fields = ['transaction_id', 'transaction_type', 'category', 'sub_category', 'amount', 'description', 'date']
 
 
 
