@@ -21,4 +21,9 @@ class UserTransactionSerializer(serializers.ModelSerializer):
         fields = ['transaction_id', 'transaction_type', 'category', 'sub_category', 'amount', 'description', 'date']
 
 
+class UserTransactionSerializerClient(serializers.ModelSerializer):
+
+    class Meta:
+        model = UserTransaction
+        fields = ['transaction_type', 'amount', 'description', 'date']
 

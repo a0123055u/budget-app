@@ -38,6 +38,7 @@ def introspect_token(request):
                 "scope": access_token.scope,
                 # "client_id": access_token.application.client_id,
                 "user_id": encoded_user_id,
+                "username": f"{access_token.user.first_name}{" "}{access_token.user.last_name}" if access_token.user.first_name else access_token.user.username,
                 "exp": access_token.expires.timestamp(),  # Expiry timestamp
                 "iat": access_token.created.timestamp(),  # Issued at timestamp
             }
