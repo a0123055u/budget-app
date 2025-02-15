@@ -60,15 +60,20 @@ class BalanceApi(APIView):
     def _get_date_range(self, months_ago=0):
         today = timezone.now()
         first_day_of_current_month = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+
+        # Last day of the previous month (the month we are in now, but minus one day)
         last_day_of_previous_month = first_day_of_current_month - timedelta(days=1)
 
-        # Adjust for the number of months ago
-        first_day_of_previous_month = last_day_of_previous_month.replace(day=1) - timedelta(days=30 * months_ago)
-        last_day_of_month_ago = first_day_of_previous_month.replace(day=1) - timedelta(days=1)
+        # For `months_ago` months, we need the first day of the month, `months_ago` months before
+        start_date = last_day_of_previous_month.replace(day=1) - timedelta(days=30 * months_ago)
 
-        return first_day_of_previous_month, last_day_of_month_ago
+        # The end date is always the last day of the previous month
+        end_date = last_day_of_previous_month
+
+        return start_date, end_date
 
     def _get_balance(self, user, start_date, end_date):
+        print(f"sdate: {start_date} edate: {end_date}")
         income = UserTransaction.objects.filter(user=user, transaction_type='income',
                                                 date__range=[start_date, end_date]).aggregate(
             total_income=Sum('amount'))['total_income']
@@ -85,28 +90,38 @@ class BalanceApi(APIView):
         end_date = request.GET.get('end_date')
         if start_date and end_date:
             balance = self._get_balance(user, start_date, end_date)
-            return Response({'balance': balance}, status=status.HTTP_200_OK)
+            all_tnx_users = UserTransaction.objects.filter(user=user,date__range=[start_date, end_date])
+            all_tnx_users_json = UserTransactionSerializerClient(all_tnx_users, many=True)
+            return Response({'balance': balance, 'transaction': json.dumps(all_tnx_users_json.data)}, status=status.HTTP_200_OK)
 
         # Handle predefined periods
         if request.GET.get('last_month'):
             start_date, end_date = self._get_date_range(1)
             balance = self._get_balance(user, start_date, end_date)
-            return Response({'balance': balance}, status=status.HTTP_200_OK)
+            all_tnx_users = UserTransaction.objects.filter(user=user, date__range=[start_date, end_date])
+            all_tnx_users_json = UserTransactionSerializerClient(all_tnx_users, many=True)
+            return Response({'balance': balance, 'transaction': json.dumps(all_tnx_users_json.data)}, status=status.HTTP_200_OK)
 
         if request.GET.get('last_three_months'):
             start_date, end_date = self._get_date_range(3)
             balance = self._get_balance(user, start_date, end_date)
-            return Response({'balance': balance}, status=status.HTTP_200_OK)
+            all_tnx_users = UserTransaction.objects.filter(user=user, date__range=[start_date, end_date])
+            all_tnx_users_json = UserTransactionSerializerClient(all_tnx_users, many=True)
+            return Response({'balance': balance, 'transaction': json.dumps(all_tnx_users_json.data)}, status=status.HTTP_200_OK)
 
         if request.GET.get('last_six_months'):
             start_date, end_date = self._get_date_range(6)
             balance = self._get_balance(user, start_date, end_date)
-            return Response({'balance': balance}, status=status.HTTP_200_OK)
+            all_tnx_users = UserTransaction.objects.filter(user=user, date__range=[start_date, end_date])
+            all_tnx_users_json = UserTransactionSerializerClient(all_tnx_users, many=True)
+            return Response({'balance': balance, 'transaction': json.dumps(all_tnx_users_json.data)}, status=status.HTTP_200_OK)
 
         if request.GET.get('last_year'):
             start_date, end_date = self._get_date_range(12)
             balance = self._get_balance(user, start_date, end_date)
-            return Response({'balance': balance}, status=status.HTTP_200_OK)
+            all_tnx_users = UserTransaction.objects.filter(user=user, date__range=[start_date, end_date])
+            all_tnx_users_json = UserTransactionSerializerClient(all_tnx_users, many=True)
+            return Response({'balance': balance, 'transaction': json.dumps(all_tnx_users_json.data)}, status=status.HTTP_200_OK)
 
         # Default to current month
         start_date = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
