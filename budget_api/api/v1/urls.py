@@ -1,12 +1,12 @@
 from django.urls import path
-from .views import IncomeStaticApi, ExpenseStaticApi, IncomeListCreateAPIView, IncomeRetrieveUpdateDestroyAPIView, \
-    ExpenseListCreateAPIView
+
+from .login.interospect import introspect_token
+from .views import CategoryApi, UserTransactionListCreateAPIView, UserTransactionUpdateDestroyAPIView, BalanceApi
 
 urlpatterns = [
-    path('income/', IncomeListCreateAPIView.as_view()),
-    path('income/<int:pk>/', IncomeRetrieveUpdateDestroyAPIView.as_view()),
-    path('income/category/', IncomeStaticApi.as_view()),
-    path('expense/', ExpenseListCreateAPIView.as_view()),
-    path('expense/<int:pk>/', ExpenseListCreateAPIView.as_view()),
-    path('expense/category/', ExpenseStaticApi.as_view()),
+    path('income/expense/category/', CategoryApi.as_view()),
+    path('transaction/user/', UserTransactionListCreateAPIView.as_view()),
+    path('transaction/user/<str:transaction_id>', UserTransactionUpdateDestroyAPIView.as_view()),
+    path('introspect/', introspect_token),
+    path('balance/', BalanceApi.as_view()),
 ]
