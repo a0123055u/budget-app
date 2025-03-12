@@ -1,11 +1,12 @@
 from sqlite3.dbapi2 import Timestamp
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 from django.db import models
 from django.utils.timezone import now
 # Create your models her
 
 from django.db import models
+
 
 class TimeStampedModel(models.Model):
     """Abstract base class that adds created_at and updated_at fields to models."""

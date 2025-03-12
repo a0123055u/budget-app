@@ -159,7 +159,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 OAUTH2_PROVIDER = {
-    "ACCESS_TOKEN_EXPIRE_SECONDS": 3600,
+    "ACCESS_TOKEN_EXPIRE_SECONDS": 3600, # 1 hr valid
+    'REFRESH_TOKEN_EXPIRE_SECONDS': 86400, # 1 day valid
+    'ROTATE_REFRESH_TOKEN': True,
     "ALLOW_PUBLIC_CLIENTS": True,  # Allow clients without client_secret
     "RESOURCE_SERVER_INTROSPECTION_URL": "/budget/api/v1/introspect/",
     "OAUTH2_VALIDATOR_CLASS": "oauth2_provider.oauth2_validators.OAuth2Validator",
