@@ -1,6 +1,6 @@
 import json
 import logging
-from datetime import timedelta
+from datetime import timedelta, datetime
 from unicodedata import category
 
 from rest_framework.response import Response
@@ -10,7 +10,8 @@ from rest_framework import generics, permissions
 from rest_framework import status
 from oauth2_provider.contrib.rest_framework import OAuth2Authentication
 from .permissions import IsOwnerOrReadOnly
-from .serializers import (UserTransactionSerializer, CategorySerializer, UserTransactionSerializerClient)
+from .serializers import (UserTransactionSerializer, CategorySerializer, UserTransactionSerializerClient,
+                          PasswordResetRequestSerializer, PasswordResetConfirmSerializer)
 #, IncomeSerializer, ExpenseSerializer)
 from django.db.models import Sum
 from ...models import *
@@ -144,3 +145,63 @@ class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
 
 
+
+from rest_framework import generics
+from rest_framework.response import Response
+from rest_framework import status
+from django.utils.crypto import get_random_string
+from django.core.mail import send_mail
+from oauth2_provider.models import AccessToken, Application
+from django.contrib.auth.models import User
+import datetime
+
+class PasswordResetRequestView(generics.GenericAPIView):
+    serializer_class = PasswordResetRequestSerializer
+    permission_classes = (AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data['email']
+        # Generate a unique token
+        token = get_random_string(length=32)
+        app = Application.objects.get(id=1)
+        user = User.objects.get(email__exact=email)
+        access_token = AccessToken.objects.create(
+            user=user,
+            token=token,
+            application=app,
+            expires=timezone.now() + datetime.timedelta(days=0.5),
+            scope="password reset",
+        )
+        # Here you would save the token to the database associated with the user
+
+        # Send the email
+        send_mail(
+            'Password Reset Request',
+            f'Use this link to reset your password: http://localhost:3000/reset-password/{token}/',
+            #  http://localhost:3000/reset/QP7mcqejh2N8cNxdEdeOEEPks2FYJTBW/
+            'budgetapp@mailinator.com',
+            [email],
+            fail_silently=False,
+        )
+        return Response({'detail': 'Password reset link sent.'}, status=status.HTTP_200_OK)
+
+
+class PasswordResetConfirmView(generics.GenericAPIView):
+    serializer_class = PasswordResetConfirmSerializer
+    permission_classes = (AllowAny,)
+
+    def post(self, request, token, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        new_password = serializer.validated_data['new_password']
+        token = self.kwargs.get("token")
+        user = AccessToken.objects.filter(token=token)
+        user_obj = User.objects.get(id=user[0].user.id)
+        print(f"USER {user_obj}")
+        user_obj.set_password(new_password)
+        user_obj.save()
+        AccessToken.objects.filter(token=token).delete()
+        # Here you would retrieve the user associated with the token and update their password
+        return Response({'detail': 'Password has been reset.'}, status=status.HTTP_200_OK)
