@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'oauth2_provider',
     'budget_api.apps.BudgetApiConfig',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -50,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'budgetcore.urls'
@@ -155,6 +157,18 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+OAUTH2_PROVIDER = {
+    "ACCESS_TOKEN_EXPIRE_SECONDS": 3600, # 1 hr valid
+    'REFRESH_TOKEN_EXPIRE_SECONDS': 86400, # 1 day valid
+    'ROTATE_REFRESH_TOKEN': True,
+    "ALLOW_PUBLIC_CLIENTS": True,  # Allow clients without client_secret
+    "RESOURCE_SERVER_INTROSPECTION_URL": "/budget/api/v1/introspect/",
+    "OAUTH2_VALIDATOR_CLASS": "oauth2_provider.oauth2_validators.OAuth2Validator",
+}
+
+
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
@@ -168,3 +182,18 @@ REST_FRAMEWORK = {
     ],
 }
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "https://your-production-domain.com",
+]
+
+
+# CORS_ALLOW_ALL_ORIGINS = True
+
+EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = 'm.thiruvalluvar@gmail.com'
+EMAIL_HOST_PASSWORD = 'cwmy sjok sshq lsfi'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = ''
