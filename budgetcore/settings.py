@@ -11,9 +11,14 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+dotenv_path = os.path.join(BASE_DIR, '.env')  # Adjust if necessary
+load_dotenv(dotenv_path)
 
 
 # Quick-start development settings - unsuitable for production
@@ -86,14 +91,20 @@ WSGI_APPLICATION = 'budgetcore.wsgi.application'
 #
 # }
 # FBF5-5365-4A4A-8B3A-3D4A
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'budget_app',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': 'localhost',  # Change to 'db' if using Docker
-        'PORT': '3306',
+        # 'NAME': 'budget_app',
+        # 'USER': 'root',
+        # 'PASSWORD': 'root',
+        # 'HOST': 'localhost',  # Change to 'db' if using Docker
+        # 'PORT': '3306',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT', '3306'),
         'OPTIONS': {
             'charset': 'utf8mb4',  # Supports emojis and extended characters
         },
