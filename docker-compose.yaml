@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  react:
+    build:
+      context: ../../react-app/budget-client-app  # Replace with the path to your React app
+      dockerfile: Dockerfile  # Specify Dockerfile name if it's different from default Dockerfile
+    container_name: react-app
+    ports:
+      - "3000:80"  # Expose port 80 for Nginx to React's frontend
+    depends_on:
+      - django  # Ensure Django container is up before React starts
+    networks:
+      - app-network
+
+  django:
+    build:
+      context: ./  # Replace with the path to your Django app
+      dockerfile: Dockerfile  # Specify Dockerfile name if it's different
+    container_name: django-app
+#    environment:
+#      - DJANGO_SECRET_KEY=your_secret_key  # Add necessary environment variables
+#      - DJANGO_DEBUG=True
+#      - DJANGO_ALLOWED_HOSTS=localhost  # Adjust as per your settings
+    ports:
+      - "8000:8000"  # Expose Django app on port 8000
+    networks:
+      - app-network
+#    depends_on:
+#      - db  # Optional, in case you had an internal DB setup
+#    environment:
+#      - DATABASE_URL=your_database_url  # URL for external RDS DB, if not using a container DB
+
+networks:
+  app-network:
+    driver: bridge

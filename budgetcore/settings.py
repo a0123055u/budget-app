@@ -30,7 +30,8 @@ SECRET_KEY = 'django-insecure-lor@p%fdrnxxiqy+uxh30z4l6m%%8nv=+a45d=^ims)*bbeb4$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
+#['54.255.209.223', 'BudgetAppLoadBalancer-1776857492.ap-southeast-1.elb.amazonaws.com', '127.0.0.1']
 
 
 # Application definition
