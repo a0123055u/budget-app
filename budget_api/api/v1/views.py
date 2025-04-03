@@ -165,7 +165,7 @@ class PasswordResetRequestView(generics.GenericAPIView):
         email = serializer.validated_data['email']
         # Generate a unique token
         token = get_random_string(length=32)
-        app = Application.objects.get(id=1)
+        app = Application.objects.get(id=2)
         user = User.objects.get(email__exact=email)
         access_token = AccessToken.objects.create(
             user=user,

@@ -1,0 +1,48 @@
+name: Deploy to AWS ECR
+
+on:
+  push:
+    branches:
+      - master  # Change this to your deployment branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-1
+
+      - name: Login to AWS ECR
+        env:
+          ECR_REGISTRY: 650251691774.dkr.ecr.ap-southeast-1.amazonaws.com
+        run: |
+          aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin $ECR_REGISTRY
+
+      - name: Build Docker image
+        run: docker build --no-cache -t budget-app-django .
+
+      - name: Tag Docker image
+        env:
+          ECR_REGISTRY: 650251691774.dkr.ecr.ap-southeast-1.amazonaws.com
+          IMAGE_NAME: budget-app-django
+        run: docker tag $IMAGE_NAME:latest $ECR_REGISTRY/$IMAGE_NAME
+
+      - name: Push Docker image to ECR
+        env:
+          ECR_REGISTRY: 650251691774.dkr.ecr.ap-southeast-1.amazonaws.com
+          IMAGE_NAME: budget-app-django
+        run: docker push $ECR_REGISTRY/$IMAGE_NAME
+
+      - name: Update ECS Service
+        env:
+          CLUSTER_NAME: BudgetAppCluster
+          SERVICE_NAME: NewBudgetAppFargate
+        run: aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --force-new-deployment
