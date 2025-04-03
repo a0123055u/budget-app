@@ -197,9 +197,12 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://your-production-domain.com",
+    "https://master.ddcg5p6nh5isa.amplifyapp.com/"
 ]
 
+CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 
+CORS_ALLOW_HEADERS = ["Authorization", "Content-Type"]
 # CORS_ALLOW_ALL_ORIGINS = True
 
 EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
