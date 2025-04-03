@@ -3,7 +3,7 @@ name: Deploy to AWS ECR
 on:
   push:
     branches:
-      - master2  # Change this to your deployment branch
+      - master  # Change this to your deployment branch
 
 jobs:
   deploy:
