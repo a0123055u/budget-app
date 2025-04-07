@@ -33,6 +33,4 @@ jobs:
       - name: Terraform Apply
         working-directory: terraform
         run: |
-          terraform apply -auto-approve \
-            -var='subnet_ids=["subnet-0e975ad7f821ac082", "subnet-0235a03092ef70188", "subnet-04bfe3628b8055b6c"]' \
-            -var='security_group_id=sg-072868b1c1135d529'
+          terraform apply -auto-approve
