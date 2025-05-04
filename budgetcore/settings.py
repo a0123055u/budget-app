@@ -14,6 +14,13 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 
+import boto3
+
+def get_ssm_param(name, with_decryption=True):
+    ssm = boto3.client('ssm')
+    return ssm.get_parameter(Name=name, WithDecryption=with_decryption)['Parameter']['Value']
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -94,22 +101,34 @@ WSGI_APPLICATION = 'budgetcore.wsgi.application'
 # FBF5-5365-4A4A-8B3A-3D4A
 
 DATABASES = {
-    'default': {
+'default': {
         'ENGINE': 'django.db.backends.mysql',
-        # 'NAME': 'budget_app',
-        # 'USER': 'root',
-        # 'PASSWORD': 'root',
-        # 'HOST': 'localhost',  # Change to 'db' if using Docker
-        # 'PORT': '3306',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT', '3306'),
+        'NAME': get_ssm_param('/budget_app/DB_NAME'),
+        'USER': get_ssm_param('/budget_app/DB_USER'),
+        'PASSWORD': get_ssm_param('/budget_app/DB_PASSWORD'),
+        'HOST': get_ssm_param('/budget_app/DB_HOST'),
+        'PORT': get_ssm_param('/budget_app/DB_PORT'),
         'OPTIONS': {
             'charset': 'utf8mb4',  # Supports emojis and extended characters
         },
-    }
+}
+
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     # 'NAME': 'budget_app',
+    #     # 'USER': 'root',
+    #     # 'PASSWORD': 'root',
+    #     # 'HOST': 'localhost',  # Change to 'db' if using Docker
+    #     # 'PORT': '3306',
+    #     'NAME': os.getenv('DB_NAME'),
+    #     'USER': os.getenv('DB_USER'),
+    #     'PASSWORD': os.getenv('DB_PASSWORD'),
+    #     'HOST': os.getenv('DB_HOST'),
+    #     'PORT': os.getenv('DB_PORT', '3306'),
+    #     'OPTIONS': {
+    #         'charset': 'utf8mb4',  # Supports emojis and extended characters
+    #     },
+    # }
 }
 
 CACHES = {
