@@ -196,8 +196,10 @@ REST_FRAMEWORK = {
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://your-production-domain.com",
-    "https://master.ddcg5p6nh5isa.amplifyapp.com"
+    # "https://your-production-domain.com",
+    "https://master.ddcg5p6nh5isa.amplifyapp.com",
+    "https://app.happybudget.net",
+    "https://happybudget.net"
 ]
 
 CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
