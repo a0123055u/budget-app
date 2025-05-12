@@ -14,6 +14,13 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 
+import boto3
+
+def get_ssm_param(name, with_decryption=True):
+    ssm = boto3.client('ssm')
+    return ssm.get_parameter(Name=name, WithDecryption=with_decryption)['Parameter']['Value']
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -37,17 +44,32 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    # Django default apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Third-party apps (order matters for some like OTP)
+    'django_otp',
+    'django_otp.plugins.otp_static',
+    'django_otp.plugins.otp_totp',
+    'two_factor',
+    # 'two_factor.plugins.phonenumber',  # optional
+    'two_factor.plugins.email',        # optional
+    'qrcode',
+
     'rest_framework',
     'oauth2_provider',
+    'corsheaders',
+
+    # Your apps
     'budget_api.apps.BudgetApiConfig',
-    'corsheaders'
 ]
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -55,6 +77,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django_otp.middleware.OTPMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -94,22 +117,34 @@ WSGI_APPLICATION = 'budgetcore.wsgi.application'
 # FBF5-5365-4A4A-8B3A-3D4A
 
 DATABASES = {
-    'default': {
+'default': {
         'ENGINE': 'django.db.backends.mysql',
-        # 'NAME': 'budget_app',
-        # 'USER': 'root',
-        # 'PASSWORD': 'root',
-        # 'HOST': 'localhost',  # Change to 'db' if using Docker
-        # 'PORT': '3306',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT', '3306'),
+        'NAME': get_ssm_param('/budget_app/DB_NAME'),
+        'USER': get_ssm_param('/budget_app/DB_USER'),
+        'PASSWORD': get_ssm_param('/budget_app/DB_PASSWORD'),
+        'HOST': get_ssm_param('/budget_app/DB_HOST'),
+        'PORT': get_ssm_param('/budget_app/DB_PORT'),
         'OPTIONS': {
             'charset': 'utf8mb4',  # Supports emojis and extended characters
         },
-    }
+}
+
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     # 'NAME': 'budget_app',
+    #     # 'USER': 'root',
+    #     # 'PASSWORD': 'root',
+    #     # 'HOST': 'localhost',  # Change to 'db' if using Docker
+    #     # 'PORT': '3306',
+    #     'NAME': os.getenv('DB_NAME'),
+    #     'USER': os.getenv('DB_USER'),
+    #     'PASSWORD': os.getenv('DB_PASSWORD'),
+    #     'HOST': os.getenv('DB_HOST'),
+    #     'PORT': os.getenv('DB_PORT', '3306'),
+    #     'OPTIONS': {
+    #         'charset': 'utf8mb4',  # Supports emojis and extended characters
+    #     },
+    # }
 }
 
 CACHES = {
@@ -196,16 +231,29 @@ REST_FRAMEWORK = {
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://your-production-domain.com",
+    # "https://your-production-domain.com",
+    "https://master.ddcg5p6nh5isa.amplifyapp.com",
+    "https://app.happybudget.net",
+    "https://happybudget.net"
 ]
 
+CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 
+CORS_ALLOW_HEADERS = ["Authorization", "Content-Type"]
 # CORS_ALLOW_ALL_ORIGINS = True
 
 EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 25
-EMAIL_HOST_USER = 'm.thiruvalluvar@gmail.com'
-EMAIL_HOST_PASSWORD = 'xxxxxxxxxxxx'
+EMAIL_HOST_USER = get_ssm_param('email_otp')
+EMAIL_HOST_PASSWORD = get_ssm_param('email_otp_password')
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = ''
+
+
+LOGIN_URL = 'two_factor:login'
+
+LOGIN_REDIRECT_URL = '/admin/'  # Redirects to admin after login
+
+
+TWO_FACTOR_AUTHENTICATION_REQUIRED = True

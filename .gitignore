@@ -5,3 +5,9 @@ tokens.txt
 .idea/
 *.pyc
 __pycache__/
+
+# Terraform local files
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+*.tfvars
