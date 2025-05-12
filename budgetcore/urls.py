@@ -7,12 +7,12 @@ from two_factor.urls import urlpatterns as tf_urls
 from two_factor.views import LoginView
 from two_factor.admin import AdminSiteOTPRequired
 ## for OTP enforce
-admin.site.__class__ = AdminSiteOTPRequired
+# admin.site.__class__ = AdminSiteOTPRequired
 
 
 urlpatterns = [
     ## for OTP enforce
-    path('', include(tf_urls)),
+    # path('', include(tf_urls)),
     # Two-factor URLs before admin
     path('admin/', admin.site.urls),
     # Other URLs (API, OAuth, etc.)
