@@ -13,7 +13,7 @@ from two_factor.admin import AdminSiteOTPRequired
 
 urlpatterns = [
     ## for OTP enforce
-    # path('', include(tf_urls)),
+    path('', include(tf_urls)),
     # Two-factor URLs before admin
     path('admin/', admin.site.urls),
     # Other URLs (API, OAuth, etc.)
