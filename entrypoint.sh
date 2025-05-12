@@ -8,12 +8,14 @@ SUPERUSER_PASSWORD="adminThiru006)^"
 # Run migrations
 echo "Running make migrations..."
 python manage.py makemigrations --noinput
+python manage.py makemigrations django_otp
+python manage.py makemigrations two_factor
 echo "Running migrate..."
 python manage.py migrate  --noinput
 python manage.py migrate django_otp
 python manage.py migrate two_factor
 
-
+python manage.py migrate --run-syncdb
 # Run Django shell command to create superuser
 echo "Creating superuser..."
 python manage.py shell <<EOF
