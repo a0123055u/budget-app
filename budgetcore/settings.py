@@ -237,6 +237,13 @@ CORS_ALLOWED_ORIGINS = [
     "https://happybudget.net"
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://app.happybudget.net",
+    "https://happybudget.net",
+    "https://master.ddcg5p6nh5isa.amplifyapp.com",
+]
+
+
 CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 
 CORS_ALLOW_HEADERS = ["Authorization", "Content-Type"]
