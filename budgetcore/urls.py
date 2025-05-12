@@ -8,7 +8,7 @@ from two_factor.views import LoginView
 from two_factor.admin import AdminSiteOTPRequired
 ## for OTP enforce
 
-# admin.site.__class__ = AdminSiteOTPRequired
+admin.site.__class__ = AdminSiteOTPRequired
 
 
 urlpatterns = [
