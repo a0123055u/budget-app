@@ -44,17 +44,32 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    # Django default apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Third-party apps (order matters for some like OTP)
+    'django_otp',
+    'django_otp.plugins.otp_static',
+    'django_otp.plugins.otp_totp',
+    'two_factor',
+    # 'two_factor.plugins.phonenumber',  # optional
+    'two_factor.plugins.email',        # optional
+    'qrcode',
+
     'rest_framework',
     'oauth2_provider',
+    'corsheaders',
+
+    # Your apps
     'budget_api.apps.BudgetApiConfig',
-    'corsheaders'
 ]
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -62,6 +77,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django_otp.middleware.OTPMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -229,7 +245,15 @@ CORS_ALLOW_HEADERS = ["Authorization", "Content-Type"]
 EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 25
-EMAIL_HOST_USER = 'm.thiruvalluvar@gmail.com'
-EMAIL_HOST_PASSWORD = 'cwmy sjok sshq lsfi'
+EMAIL_HOST_USER = get_ssm_param('email_otp')
+EMAIL_HOST_PASSWORD = get_ssm_param('email_otp_password')
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = ''
+
+
+LOGIN_URL = 'two_factor:login'
+
+LOGIN_REDIRECT_URL = '/admin/'  # Redirects to admin after login
+
+
+TWO_FACTOR_AUTHENTICATION_REQUIRED = True

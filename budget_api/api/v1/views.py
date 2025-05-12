@@ -205,3 +205,6 @@ class PasswordResetConfirmView(generics.GenericAPIView):
         AccessToken.objects.filter(token=token).delete()
         # Here you would retrieve the user associated with the token and update their password
         return Response({'detail': 'Password has been reset.'}, status=status.HTTP_200_OK)
+
+
+
