@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - master  # Change this to your deployment branch
+  pull_request:
+    branches:
+      - master
 
 jobs:
   deploy:
