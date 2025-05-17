@@ -127,8 +127,8 @@ class BalanceApi(APIView):
         # Default to current month
         start_date = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         balance = self._get_balance(user, start_date, timezone.now())
-        last_five_tnx = UserTransaction.objects.filter(user=user).order_by('-date')[:5]
-        last_five_transactions = UserTransactionSerializerClient(last_five_tnx, many=True)
+        current_month_tnx = UserTransaction.objects.filter(user=user).order_by('-date')
+        last_five_transactions = UserTransactionSerializerClient(current_month_tnx, many=True)
         return Response({'balance': balance, 'last_five_transaction' : json.dumps(last_five_transactions.data)}, status=status.HTTP_200_OK)
 
 
