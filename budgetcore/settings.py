@@ -234,7 +234,10 @@ CORS_ALLOWED_ORIGINS = [
     # "https://your-production-domain.com",
     "https://master.ddcg5p6nh5isa.amplifyapp.com",
     "https://app.happybudget.net",
-    "https://happybudget.net"
+    "https://happybudget.net",
+    #for android
+    "capacitor://localhost",
+    "https://localhost",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
